@@ -1,27 +1,29 @@
 var APIkey = "7bc0e627ae57f769db338969c74ae3c9"
+
 var searchInput = document.querySelector("#search-input");
-var selectedCity;
+
 var searchBtn = document.querySelector("#search-button");
 var historyList = document.querySelector("#history");
 var forecastEl = document.querySelector("#forecast");
+var todayEl = document.querySelector("#today");
+
 var searchHistory = [];
 var firstChild = historyList.firstChild;
-var todayEl = document.querySelector("#today");
 var newBtn;
 var cityHeader = "";
 var cityLon;
 var cityLat;
-var queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIkey;
-var cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
+var queryURL;
+var cityInfo;
+var selectedCity;
 
-updateHistory();
 
+// Access LocalStorage and display search history
 if(localStorage){
     updateHistory();
 
     for(i=0; i<searchHistory.length; i++){
-        newBtn = document.createElement('button');
-        newBtn.setAttribute('id', searchHistory[i]);
+        createNewBtn(searchHistory[i]);
         newBtn.textContent = searchHistory[i];
         firstChild = historyList.firstChild;
 
@@ -33,26 +35,28 @@ if(localStorage){
         }
 }
 
-
+// When Search Button is clicked
 searchBtn.addEventListener("click", function(e){
 
     updateHistory();
 
     selectedCity = searchInput.value.trim();
+    
     saveToLocalStorage(selectedCity);
+    createNewBtn(selectedCity);
 
-    newBtn = document.createElement('button');
-    newBtn.setAttribute('id', selectedCity);
     newBtn.textContent = selectedCity;
-    firstChild = historyList.firstChild;
 
-    if(selectedCity && historyList.firstChild.id != selectedCity){
     if(firstChild){
-        historyList.insertBefore(newBtn, firstChild);
+        firstChild = historyList.firstChild;
+        if(selectedCity && historyList.firstChild.id != selectedCity){
+            historyList.insertBefore(newBtn, firstChild);
+        }
     } else {
         historyList.appendChild(newBtn);
     }
-}
+
+
 
 
 cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
@@ -218,3 +222,9 @@ function updateForecast(data){
 
 }
 
+
+
+function createNewBtn (city){
+    newBtn = document.createElement('button');
+    newBtn.setAttribute('id', city);
+}
