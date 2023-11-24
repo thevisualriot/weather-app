@@ -1,5 +1,4 @@
 var APIkey = "7bc0e627ae57f769db338969c74ae3c9"
-var queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid=" + APIkey;
 var searchInput = document.querySelector("#search-input");
 var selectedCity;
 var searchBtn = document.querySelector("#search-button");
@@ -23,15 +22,18 @@ searchBtn.addEventListener("click", function(e){
         cityLon = data[0].lon;
         cityLat = data[0].lat
         console.log(selectedCity + " " + cityLon + " " + cityLat);
+
+        var queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIkey;
+
+    fetch (queryURL)
+    .then(function(response) {
+        return response.json();
+    }).then (function(data){
+        console.log(data);
+    })
+
     })
 
 
     }
 })
-
-// fetch (queryURL)
-// .then(function(response) {
-//     return response.json();
-// }).then (function(data){
-//     console.log(data);
-// })
