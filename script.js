@@ -4,8 +4,23 @@ var selectedCity;
 var searchBtn = document.querySelector("#search-button");
 var historyList = document.querySelector("#history");
 var searchHistory = [];
+var firstChild = historyList.firstChild;
 
 updateHistory();
+
+if(localStorage){
+    updateHistory();
+    for(i=0; i<searchHistory.length; i++){
+        var newBtn = document.createElement('button');
+        newBtn.setAttribute('id', searchHistory[i]);
+        newBtn.textContent = searchHistory[i];
+        if (firstChild){
+            historyList.insertBefore(newBtn, firstChild);
+        } else {
+            historyList.appendChild(newBtn);
+        }
+        }
+}
 
 
 searchBtn.addEventListener("click", function(e){
@@ -14,6 +29,17 @@ searchBtn.addEventListener("click", function(e){
 
     selectedCity = searchInput.value.trim();
     saveToLocalStorage(selectedCity);
+
+    var newBtn = document.createElement('button');
+    newBtn.setAttribute('id', selectedCity);
+    newBtn.textContent = selectedCity;
+    firstChild = historyList.firstChild;
+
+    if(firstChild){
+        historyList.insertBefore(newBtn, firstChild);
+    } else {
+        historyList.appendChild(newBtn);
+    }
 
     var cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
     var cityLon;
@@ -31,6 +57,8 @@ searchBtn.addEventListener("click", function(e){
 
         var queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIkey;
 
+
+    // PRINT THE WEATHER
     fetch (queryURL)
     .then(function(response) {
         return response.json();
@@ -58,12 +86,6 @@ function updateHistory (){
             searchHistory = JSON.parse(pastSearch);
         } else {
             searchHistory = [];
-        }
-
-        for(i=0; i<searchHistory.length; i++){
-            var newBtn = document.createElement('button');
-            newBtn.textContent = searchHistory[i];
-            historyList.appendChild(newBtn);
         }
 }
 }
