@@ -2,6 +2,7 @@ var APIkey = "7bc0e627ae57f769db338969c74ae3c9"
 var searchInput = document.querySelector("#search-input");
 var selectedCity;
 var searchBtn = document.querySelector("#search-button");
+var historyList = document.querySelector("#history");
 var searchHistory = [];
 
 updateHistory();
@@ -57,6 +58,12 @@ function updateHistory (){
             searchHistory = JSON.parse(pastSearch);
         } else {
             searchHistory = [];
+        }
+
+        for(i=0; i<searchHistory.length; i++){
+            var newBtn = document.createElement('button');
+            newBtn.textContent = searchHistory[i];
+            historyList.appendChild(newBtn);
         }
 }
 }
