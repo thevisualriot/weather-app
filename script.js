@@ -81,7 +81,12 @@ searchBtn.addEventListener("click", function(e){
         humidity.textContent = "Humidity: " + data.main.humidity + "%";
 
         var todayDay = dayjs().format('DD/MM/YYYY');
+        var weatherIconID = data.weather[0].icon;
+        var weatherIconURL = "https://openweathermap.org/img/wn/" + weatherIconID + ".png";
+        var weatherIcon = document.createElement('img');
+        weatherIcon.setAttribute('src', weatherIconURL);
         cityHeader.textContent = selectedCity + " (" + todayDay + ")";
+        cityHeader.appendChild(weatherIcon);
 
         while (todayEl.hasChildNodes()){
             todayEl.removeChild(todayEl.firstChild);
