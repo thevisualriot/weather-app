@@ -2,18 +2,23 @@ var APIkey = "7bc0e627ae57f769db338969c74ae3c9"
 var searchInput = document.querySelector("#search-input");
 var selectedCity;
 var searchBtn = document.querySelector("#search-button");
+var searchHistory = [];
 
-console.log(searchBtn);
+updateHistory();
+
 
 searchBtn.addEventListener("click", function(e){
-    selectedCity = searchInput.value;
+
+    updateHistory();
+
+    selectedCity = searchInput.value.trim();
+    saveToLocalStorage(selectedCity);
+
     var cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
     var cityLon;
     var cityLat;
     e.preventDefault();
-    // console.log('working');
     if (selectedCity) {
-        // console.log(selectedCity);
 
     fetch (cityInfo)
     .then(function(response) {
@@ -37,3 +42,29 @@ searchBtn.addEventListener("click", function(e){
 
     }
 })
+
+
+
+
+
+function updateHistory (){
+    var pastSearch;
+    if (localStorage){
+        console.log("here: " + searchHistory);
+        pastSearch = localStorage.getItem("history");
+    
+        if (pastSearch) {
+            searchHistory = JSON.parse(pastSearch);
+        } else {
+            searchHistory = [];
+        }
+}
+}
+
+
+function saveToLocalStorage(object){
+    if (object !== "") {
+        searchHistory.push(object);
+        localStorage.setItem("history", JSON.stringify(searchHistory));
+    }
+}
