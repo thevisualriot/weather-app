@@ -41,7 +41,7 @@ searchBtn.addEventListener("click", function(e){
     
     createNewBtn(selectedCity);
     
-    cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey; 
+    cityInfo = "https://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey; 
     
     if (selectedCity) {
         fetch (cityInfo)
@@ -93,7 +93,7 @@ historyList.addEventListener("click", function(e){
     if(e.target.tagName === "BUTTON"){
         selectedCity = e.target.id;
         
-        cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
+        cityInfo = "https://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
         
         fetch (cityInfo)
         .then(function(response) {
