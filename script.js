@@ -5,7 +5,7 @@ var historyList = document.querySelector("#history");
 var forecastEl = document.querySelector("#forecast");
 var todayEl = document.querySelector("#today");
 var searchHistory = [];
-var firstChild = historyList.firstChild;
+var firstChild;
 var newBtn;
 var cityLon;
 var cityLat;
@@ -37,25 +37,26 @@ searchBtn.addEventListener("click", function(e){
 
     selectedCity = searchInput.value.trim();
     
-    saveToLocalStorage(selectedCity);
+    
     createNewBtn(selectedCity);
 
-    if(firstChild){
-        firstChild = historyList.firstChild;
-        if(selectedCity && historyList.firstChild.id != selectedCity){
-            historyList.insertBefore(newBtn, firstChild);
-        }
-    } else {
-        historyList.appendChild(newBtn);
-    }
     
     cityInfo = "http://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
     
     if (selectedCity) {
         fetch (cityInfo)
         .then(function(response) {
-            return response.json();
+                return response.json();
         }).then (function(data){
+            if(data.length === 0){
+                clearElement(todayEl);
+                clearElement(forecastEl);
+                var error = document.createElement("p");
+                error.textContent = "City not found";
+                todayEl.appendChild(error);
+                throw new Error('City not found');
+            }
+
             cityLon = data[0].lon;
             cityLat = data[0].lat;
 
@@ -68,8 +69,22 @@ searchBtn.addEventListener("click", function(e){
                 updateToday(data);
                 updateForecast(data);
             })
+
+            saveToLocalStorage(selectedCity);
+
+            if(firstChild){
+                firstChild = historyList.firstChild;
+                if(selectedCity && historyList.firstChild.id != selectedCity){
+                    historyList.insertBefore(newBtn, firstChild);
+                }
+            } else if (selectedCity) {
+                historyList.appendChild(newBtn);
+            }
+
         })
     }
+
+    
 });
 
 
@@ -125,6 +140,7 @@ function saveToLocalStorage(object){
         searchHistory.push(object);
         localStorage.setItem("history", JSON.stringify(searchHistory));
     }
+    firstChild = historyList.firstChild;
 }
 
 // Display Today Weather Info
@@ -149,23 +165,20 @@ function updateToday(data) {
     
     cityHeader.appendChild(weatherIcon);
 
-    while (todayEl.hasChildNodes()){
-        todayEl.removeChild(todayEl.firstChild);
-    } 
+    clearElement(todayEl);
             
     todayEl.appendChild(cityHeader);
     todayEl.appendChild(todayTemp);
     todayEl.appendChild(todayWind);
     todayEl.appendChild(todayHumidity);
+    todayEl.style.borderStyle ="solid";
 }
 
 
 // Display 5-day Forecast
 function updateForecast(data){
     
-    while (forecastEl.hasChildNodes()){
-        forecastEl.removeChild(forecastEl.firstChild);
-    }
+    clearElement(forecastEl);
 
     var forecastHeader = document.createElement('h2');
     var currentDayTimestamp;
@@ -209,8 +222,15 @@ function updateForecast(data){
 
 // Create new Button
 function createNewBtn (city){
-    newBtn = document.createElement('button');
-    newBtn.setAttribute('id', city);
+    newBtn = document.createElement("button");
+    newBtn.setAttribute("id", city);
     newBtn.textContent = city;
 }
 
+
+// Remove all children of an Element
+function clearElement (element){
+    while (element.hasChildNodes()){
+        element.removeChild(element.firstChild);
+    } 
+}
