@@ -7,7 +7,7 @@ Welcome to my simple weather app that provides current weather information and a
 
 Check out the live version of the Weather App [here](https://thevisualriot.github.io/weather-app/)
 
-![Interface of the Weather App](./assets/app%20interface.gif)
+![Interface of the Weather App](assets/weather-app.gif)
 
 
 ## 💻 Features
