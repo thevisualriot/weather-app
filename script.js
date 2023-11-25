@@ -13,6 +13,7 @@ var cityLat;
 var queryURL;
 var cityInfo;
 var selectedCity;
+var displayedName;
 
 
 // ACCESS LOCAL STORAGE AND DISPLAY SEARCH HISTORY
@@ -38,8 +39,6 @@ searchBtn.addEventListener("click", function(e){
     e.preventDefault();
 
     selectedCity = searchInput.value.trim(); // store input city
-    
-    createNewBtn(selectedCity);
     
     cityInfo = "https://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey; 
     
@@ -67,20 +66,23 @@ searchBtn.addEventListener("click", function(e){
             .then(function(response) {
                 return response.json();
             }).then (function(data){
+                displayedName = data.city.name;
                 updateToday(data);  // display today weather 
                 updateForecast(data); // display 5 day forecast
+                createNewBtn(displayedName);
+                saveToLocalStorage(displayedName); // save the search in local storage
+
+                if(firstChild){  // add the button at the top to display the last search first
+                    firstChild = historyList.firstChild;
+                    if(displayedName && historyList.firstChild.id != displayedName){
+                        historyList.insertBefore(newBtn, firstChild);
+                    }
+                } else if (displayedName) {
+                    historyList.appendChild(newBtn);
+                }
             })
 
-            saveToLocalStorage(selectedCity); // save the search in local storage
-
-            if(firstChild){  // add the button at the top to display the last search first
-                firstChild = historyList.firstChild;
-                if(selectedCity && historyList.firstChild.id != selectedCity){
-                    historyList.insertBefore(newBtn, firstChild);
-                }
-            } else if (selectedCity) {
-                historyList.appendChild(newBtn);
-            }
+            
 
         })
     }
@@ -91,9 +93,9 @@ searchBtn.addEventListener("click", function(e){
 historyList.addEventListener("click", function(e){
     
     if(e.target.tagName === "BUTTON"){
-        selectedCity = e.target.id;
+        displayedName = e.target.id;
         
-        cityInfo = "https://api.openweathermap.org/geo/1.0/direct?q={" + selectedCity + "}&limit=3&appid=" + APIkey;
+        cityInfo = "https://api.openweathermap.org/geo/1.0/direct?q={" + displayedName + "}&limit=3&appid=" + APIkey;
         
         fetch (cityInfo)
         .then(function(response) {
@@ -160,7 +162,7 @@ function updateToday(data) {
     todayTemp.textContent = "Temp: " + data.list[0].main.temp + "°C";   
     todayWind.textContent = "Wind: " + data.list[0].wind.speed + " KPH";    
     todayHumidity.textContent = "Humidity: " + data.list[0].main.humidity + "%";
-    cityHeader.textContent = selectedCity + " (" + todayDay + ")";
+    cityHeader.textContent = displayedName + " (" + todayDay + ")";
     
     cityHeader.appendChild(weatherIcon);
 
